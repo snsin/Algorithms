@@ -20,10 +20,11 @@ public class MergeSort {
 		}
 	}
 	
+	@SuppressWarnings("unused")
 	private static <T extends Comparable<T>> void merge(
-			T[] array, int p, int q, int r) {
-		ArrayList<T> left = createSubArray(array, p, q - p);
-		ArrayList<T> rigth = createSubArray(array, q, r - q);
+			T[] array, int p, int q, int r, boolean ignored) {
+		ArrayList<T> left = createSubArray(array, p, q - p, true);
+		ArrayList<T> rigth = createSubArray(array, q, r - q, true);
 		int i = 0;
 		int j = 0;
 
@@ -43,14 +44,45 @@ public class MergeSort {
 		
 	}
 	
+	public static <T extends Comparable<T>> void merge(
+			T[] array, int p, int q, int r) {
+		T[] left = createSubArray(array, p, q - p);
+		T[] rigth = createSubArray(array, q, r - q);
+		int i = 0;
+		int j = 0;
+		while (i < left.length && j < rigth.length) {
+			if (left[i].compareTo(rigth[j]) < 0) {
+				array[p++] = left[i++];
+			} else {
+				array[p++] = rigth[j++];
+			}
+		}
+		while (i < left.length) {
+			array[p++] = left[i++];
+		}
+		while (j < rigth.length) {
+			array[p++] = rigth[j++];
+		}
+		
+	}
+	
 	private static <T extends Comparable<T>> ArrayList<T> createSubArray(
-			T[] array, int p, int length) {
+			T[] array, int p, int length, boolean ignored) {
 		ArrayList<T> subArray = new ArrayList<>();
 		for (int i = 0; i < length && p + i < array.length; i++) {
 			subArray.add(array[p + i]);
 		}
 		
 		return subArray;
+	}
+	
+	private static <T extends Comparable<T>> T[] createSubArray(
+			final T[] array, final int srcPos, final int length) {
+		@SuppressWarnings("unchecked")
+		T[] subArray = (T[]) new Comparable[length];
+		System.arraycopy(array, srcPos, subArray, 0, length);
+		return subArray;
+		
 	}
 
 }
