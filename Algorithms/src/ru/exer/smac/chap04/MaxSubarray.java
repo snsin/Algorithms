@@ -40,6 +40,32 @@ public class MaxSubarray {
 		
 	}
 	
+	public static Tuple<Integer> findMaxCrossingSubarray(final Integer[] array,
+			final int low, final int mid, final int high) {
+		Integer leftSum = null;
+		Integer sum = 0;
+		int maxLeft = -1;
+		for (int i = mid; i >= low; i--) {
+			sum += array[i];
+			if (leftSum == null || sum > leftSum) {
+				leftSum = sum;
+				maxLeft = i;
+			}
+		}
+		Integer rightSum = null;
+		sum = 0;
+		int maxRight = -1;
+		for (int i = mid + 1; i <= high; i++) {
+			sum += array[i];
+			if (rightSum == null || sum > rightSum) {
+				rightSum = sum;
+				maxRight = i;
+			}
+		}
+		
+		return new Tuple<Integer>(maxLeft, maxRight, leftSum + rightSum);
+	}
+	
 	public static void main(String...strings) {
 		Integer[] testArr =  new Integer[] {-4, -3, -2, -1, -1, 1, -3};
 		Tuple<Integer> res = findMaxSubarrSquareTime(testArr);
