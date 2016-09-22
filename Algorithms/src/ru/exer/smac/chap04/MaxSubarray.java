@@ -17,17 +17,18 @@ public class MaxSubarray {
 		}
 	}
 	
-	public static Tuple<Integer> findMaxSubarrSquareTime(Integer[] array) {
+	public static Tuple<Integer> findMaxSubarrSquareTime(final Integer[] array,
+			final int low, final int high) {
 		Integer maxSum = null;
 		int left = -1;
 		int right = -1;
-		for (int i = 0; i < array.length; i++) {
+		for (int i = low; i < high; i++) {
 			Integer sum = array[i];
 			if (maxSum == null || sum > maxSum) {
 				maxSum = sum;
 				left = right = i;
 			}
-			for (int j = i + 1; j < array.length; j++) {
+			for (int j = i + 1; j < high; j++) {
 				sum += array[j];
 				if (sum > maxSum) {
 					maxSum = sum;
@@ -68,7 +69,7 @@ public class MaxSubarray {
 	
 	public static void main(String...strings) {
 		Integer[] testArr =  new Integer[] {-4, -3, -2, -1, -1, 1, -3};
-		Tuple<Integer> res = findMaxSubarrSquareTime(testArr);
+		Tuple<Integer> res = findMaxSubarrSquareTime(testArr, 0, testArr.length);
 		System.out.printf("%d, %d, S = %d", res.low, res.high, res.sum);
 	}
 }
