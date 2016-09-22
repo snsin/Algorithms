@@ -85,7 +85,6 @@ public class MaxSubarray {
 		}
 	}
 	
-	
 	private static Tuple<Integer> max(final Tuple<Integer>...values) {
 		Tuple<Integer> maxTuple = null;
 		Integer maxSum = null;
@@ -97,12 +96,7 @@ public class MaxSubarray {
 		}
 		return maxTuple;
 	}
-
-	private static boolean isGreateEqual(Tuple<Integer> leftMax, Tuple<Integer> rigthMax) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
+//TODO Add benchmarks!
 	public static void main(String...strings) {
 		Integer[] testArr =  new Integer[] {-4, -3, -2, -1, -1, 1, -3};
 		Tuple<Integer> res = findMaxSubarray(testArr, 0, testArr.length - 1);
