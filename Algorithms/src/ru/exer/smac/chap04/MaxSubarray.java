@@ -1,6 +1,5 @@
 package ru.exer.smac.chap04;
 
-import java.util.Arrays;
 import java.util.Random;
 
 public class MaxSubarray {
@@ -108,12 +107,40 @@ public class MaxSubarray {
 			}
 			final Tuple<Integer> localMax;
 			final Integer currentIToJPlusOne = currentSum - minZeroToJ.sum + array[j + 1];
-			if (maxZeroToJ.sum.compareTo(currentIToJPlusOne) >= 0) {
+			if (maxZeroToJ.sum.compareTo(currentIToJPlusOne) > 0) {
 				localMax = new Tuple<Integer>(0, maxZeroToJ.high, maxZeroToJ.sum);
 			} else {
 				localMax = new Tuple<Integer>(minZeroToJ.high + 1, j + 1, currentIToJPlusOne);
 			}
 			max = max(max, localMax);
+		}
+		return max;
+	}
+	
+	public static Tuple<Integer> findMaxSubarrayLinearB(final Integer[] array) {
+		Tuple<Integer> max = new Tuple<Integer>(-1, -1, null);
+		int currentSum = 0;
+		int restartSumIndex = -1;
+		for (int j = 0; j < array.length - 1; j++) {
+			if (j == 0) {
+				max = new Tuple<Integer>(0, 0, array[0]);
+				restartSumIndex = 0;
+			} 
+			currentSum += array[j];
+			
+			if (currentSum < 0 && currentSum < array[j + 1]) {
+				currentSum = 0;
+				restartSumIndex = j + 1;
+			}
+
+			if (currentSum > max.sum) {
+				max = new Tuple<Integer>(restartSumIndex, j, currentSum);
+			} 
+			
+			if ( currentSum + array[j + 1] > max.sum) {
+				max = new Tuple<Integer>(restartSumIndex, j + 1, currentSum + array[j + 1]);
+			} 
+
 		}
 		return max;
 	}
@@ -134,13 +161,12 @@ public class MaxSubarray {
 	
 //TODO Add benchmarks!
 	public static void main(String...strings) {
-		Integer[] testArr =  new Integer[10000];
+		Integer[] testArr =  new Integer[10000000];
 		for (int i = 0; i < testArr.length; i++) {
 			testArr[i] = rnd.nextBoolean() ? -1 * rnd.nextInt(BOUND) 
 					: rnd.nextInt(BOUND);
 		}
 		
-		testArr = new Integer[] {-5, -4, -3};
 		Tuple<Integer> res;
 		long startTime, endTime;
 		startTime = System.nanoTime();
@@ -148,14 +174,13 @@ public class MaxSubarray {
 		endTime = System.nanoTime();
 		System.out.printf("%d, %d, S = %d, %d\n", res.low, res.high, res.sum, (endTime - startTime) / 1000);
 		startTime = System.nanoTime();
-		res = findMaxSubarrSquareTime(testArr, 0, testArr.length - 1);
+		res = findMaxSubarrayLinear(testArr);
 		endTime = System.nanoTime();
 		System.out.printf("%d, %d, S = %d, %d\n", res.low, res.high, res.sum, (endTime - startTime) / 1000);
-		Tuple<Integer> res1;
 		startTime = System.nanoTime();
-		res1 = findMaxSubarrayLinear(testArr);
+		res = findMaxSubarrayLinearB(testArr);
 		endTime = System.nanoTime();
-		System.out.printf("%d, %d, S = %d, %d\n", res1.low, res1.high, res1.sum, (endTime - startTime) / 1000);
-		System.out.println(Arrays.toString(Arrays.copyOfRange(testArr, res1.high, res.high)));
+		System.out.printf("%d, %d, S = %d, %d\n", res.low, res.high, res.sum, (endTime - startTime) / 1000);
+
 	}
 }
