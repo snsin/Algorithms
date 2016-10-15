@@ -1,4 +1,4 @@
-package ru.exer.smac.chap04;
+package ru.exers.smac.chap04;
 
 import java.util.Random;
 
