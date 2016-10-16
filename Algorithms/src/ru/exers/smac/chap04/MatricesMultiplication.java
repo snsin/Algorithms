@@ -1,6 +1,7 @@
 package ru.exers.smac.chap04;
 
 import java.util.Arrays;
+import java.util.Random;
 
 public class MatricesMultiplication {
 	private static class MatrixRef {
@@ -35,7 +36,14 @@ public class MatricesMultiplication {
 			final int startCol = y > 0 ? (y - 1) * size : 0;
 			return new MatrixRef(this.matrix, size, startRow, startCol);
 		}
+		
+		public int getElemOneOne() {
+			return matrix[startRow][startCol];
+		}
 	}
+
+	private static final int MAX_VALUE = 9;
+	private static final Random RAND = new Random();
 	
 	public static int[][] iterMul(final int[][] matrixA, final int[][] matrixB) {
 		int[][] result = null;
@@ -51,6 +59,17 @@ public class MatricesMultiplication {
 			}
 		}
 		return result;
+	}
+	
+	public static int[][] recursiveMul(MatrixRef matrixA, MatrixRef matrixB) {
+		final int size = matrixA.size;
+		int[][] matrixC = new int[size][size];
+		if (size == 1) {
+			matrixC[0][0] = matrixA.getElemOneOne() * matrixB.getElemOneOne();
+		} else {
+			matrixC[0][0] = matrixA.getElemOneOne() * matrixB.getElemOneOne();
+		}
+		return null;
 	}
 	
 	private static boolean checkMatrices(int[][] matrixA, int[][] matrixB) {
@@ -82,21 +101,52 @@ public class MatricesMultiplication {
 	}
 
 	public static void main(String...args) {
-		int[][] matrixA = new int[2][2];
-		int[][] matrixB = new int[2][2];
-		matrixA[0][0] =  1;
-		matrixA[0][1] =  3;
-		matrixA[1][0] =  7;
-		matrixA[1][1] =  5;
-		matrixB[0][0] =  6;
-		matrixB[0][1] =  8;
-		matrixB[1][0] =  4;
-		matrixB[1][1] =  2;
+		int[][] matrixA = createSquareMatrix(4);
+		int[][] matrixB = createSquareMatrix(4);
 		int[][] multiplied = iterMul(matrixA, matrixB);
-		for (int i = 0; multiplied != null && i < multiplied.length; i++) {
-			System.out.println(Arrays.toString(multiplied[i]));
-		}
-		System.out.println(multiplied);
+		
+		printMatrix(matrixA);
+		printMatrix(matrixB);
+		printMatrix(multiplied);
+		MatrixRef m = new MatrixRef(multiplied);
+		printMatrixRef(m.split(1, 1).split(2, 2));
 	}
+	
+	public static void printMatrix(final int[][] matrix) {
+		System.out.println("\n======================");
+		for (int i = 0; matrix != null && i < matrix.length; i++) {
+			System.out.println(Arrays.toString(matrix[i]));
+		}
+		System.out.println("======================");
+	}
+	
+	public static void printMatrixRef(MatrixRef matrix) {
+		System.out.println("======================");
+		for (int i = 0; i < matrix.size; i++) {
+			for (int j = 0; j < matrix.size; j++) {
+				System.out.printf("%4d", matrix.matrix[matrix.startRow + i][matrix.startCol+j]);
+			}
+			System.out.println();
+			
+		}
+		System.out.println("======================");
+		
+	}
+	
+	public static int[][] createSquareMatrix(int size) {
+		if (size < 1) {
+			return null;
+		}
+		int[][] matrix =  new int[size][size];
+		for (int[] row : matrix) {
+			for (int i = 0; i < row.length; i++) {
+				row[i] = 1 + RAND.nextInt(MAX_VALUE);
+			}
+		}
+		return matrix;
+		
+	}
+	
+	
 
 }
