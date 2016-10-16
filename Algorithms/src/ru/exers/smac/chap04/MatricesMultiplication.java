@@ -2,7 +2,7 @@ package ru.exers.smac.chap04;
 
 import java.util.Arrays;
 
-public class MatrixMultiplication {
+public class MatricesMultiplication {
 	private static class MatrixRef {
 		
 		final int[][] matrix;
