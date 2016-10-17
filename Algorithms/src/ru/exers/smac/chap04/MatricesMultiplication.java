@@ -40,9 +40,19 @@ public class MatricesMultiplication {
 		public int getElemOneOne() {
 			return matrix[startRow][startCol];
 		}
+		
+		public void assign(MatrixRef anotherMatrix) {
+			final int size = Math.min(this.size, anotherMatrix.size);
+			for (int i = 0; i < size; i++){
+				System.arraycopy(anotherMatrix.matrix[anotherMatrix.startRow + i], 
+						anotherMatrix.startCol, this.matrix[this.startRow + i], this.startCol, size);
+				
+			}
+		}
 	}
 
 	private static final int MAX_VALUE = 9;
+	
 	private static final Random RAND = new Random();
 	
 	public static int[][] iterMul(final int[][] matrixA, final int[][] matrixB) {
@@ -61,6 +71,8 @@ public class MatricesMultiplication {
 		return result;
 	}
 	
+	
+	
 	public static int[][] recursiveMul(MatrixRef matrixA, MatrixRef matrixB) {
 		final int size = matrixA.size;
 		int[][] matrixC = new int[size][size];
@@ -72,34 +84,6 @@ public class MatricesMultiplication {
 		return null;
 	}
 	
-	private static boolean checkMatrices(int[][] matrixA, int[][] matrixB) {
-		final boolean result;
-		if (matrixA == null || matrixB == null) {
-			result = false;
-		} else {
-			result = isRectangleMatrix(matrixA) && isRectangleMatrix(matrixB)
-					&& (matrixA[0].length == matrixB.length);
-		}
-		return result;
-	}
-
-	private static boolean isRectangleMatrix(int[][] matrix) {
-		if (matrix.length < 1) {
-			return false;
-		}
-
-		final int columnsCount = matrix[0].length;
-		if (columnsCount < 1) {
-			return false;
-		}
-		for (int i = 1; i < matrix.length; i++) {
-			if (columnsCount != matrix[i].length) {
-				return false;
-			}
-		}
-		return true;
-	}
-
 	public static void main(String...args) {
 		int[][] matrixA = createSquareMatrix(4);
 		int[][] matrixB = createSquareMatrix(4);
@@ -109,7 +93,9 @@ public class MatricesMultiplication {
 		printMatrix(matrixB);
 		printMatrix(multiplied);
 		MatrixRef m = new MatrixRef(multiplied);
-		printMatrixRef(m.split(1, 1).split(2, 2));
+		MatrixRef n = new MatrixRef(new int[4][4]);
+		n.split(1, 1).assign(m.split(2, 2));
+		printMatrixRef(n);
 	}
 	
 	public static void printMatrix(final int[][] matrix) {
@@ -145,6 +131,38 @@ public class MatricesMultiplication {
 		}
 		return matrix;
 		
+	}
+
+
+
+	private static boolean checkMatrices(int[][] matrixA, int[][] matrixB) {
+		final boolean result;
+		if (matrixA == null || matrixB == null) {
+			result = false;
+		} else {
+			result = isRectangleMatrix(matrixA) && isRectangleMatrix(matrixB)
+					&& (matrixA[0].length == matrixB.length);
+		}
+		return result;
+	}
+
+
+
+	private static boolean isRectangleMatrix(int[][] matrix) {
+		if (matrix.length < 1) {
+			return false;
+		}
+	
+		final int columnsCount = matrix[0].length;
+		if (columnsCount < 1) {
+			return false;
+		}
+		for (int i = 1; i < matrix.length; i++) {
+			if (columnsCount != matrix[i].length) {
+				return false;
+			}
+		}
+		return true;
 	}
 	
 	
