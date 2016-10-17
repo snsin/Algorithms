@@ -41,13 +41,37 @@ public class MatricesMultiplication {
 			return matrix[startRow][startCol];
 		}
 		
+		public int get(final int i, final int j) {
+			return matrix[startRow + i][startCol + j];
+		}
+		
+		public int[] getRow(final int i) {
+			return matrix[startRow + i];
+		}
+		
 		public void assign(MatrixRef anotherMatrix) {
 			final int size = Math.min(this.size, anotherMatrix.size);
 			for (int i = 0; i < size; i++){
-				System.arraycopy(anotherMatrix.matrix[anotherMatrix.startRow + i], 
-						anotherMatrix.startCol, this.matrix[this.startRow + i], this.startCol, size);
+				System.arraycopy(anotherMatrix.getRow(i), anotherMatrix.startCol, 
+						this.getRow(i), this.startCol, size);
 				
 			}
+		}
+		
+		public static MatrixRef sum(MatrixRef matrixA, MatrixRef matrixB) {
+			final MatrixRef result;
+			if(matrixA.size != matrixB.size || matrixA.size == 0) {
+				result = null;
+			} else {
+				final int[][] sum = new int[matrixA.size][matrixA.size];
+				for (int i = 0; i < sum.length; i++) {
+					for (int j = 0; j < sum[i].length; j++) {
+						sum[i][j] = matrixA.get(i, j) + matrixB.get(i, j);
+					}
+				}
+				result = new MatrixRef(sum);
+			}
+			return result;
 		}
 	}
 
@@ -96,6 +120,7 @@ public class MatricesMultiplication {
 		MatrixRef n = new MatrixRef(new int[4][4]);
 		n.split(1, 1).assign(m.split(2, 2));
 		printMatrixRef(n);
+		printMatrixRef(MatrixRef.sum(m.split(1, 1), m.split(2, 2)));
 	}
 	
 	public static void printMatrix(final int[][] matrix) {
