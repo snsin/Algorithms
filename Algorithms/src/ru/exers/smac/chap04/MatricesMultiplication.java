@@ -32,8 +32,8 @@ public class MatricesMultiplication {
 		
 		public MatrixRef split(final int x, final int y) {
 			final int size =  this.size / 2;
-			final int startRow = x > 0 ? (x - 1) * size : 0;
-			final int startCol = y > 0 ? (y - 1) * size : 0;
+			final int startRow = x > 0 ? (x - 1) * size + this.startRow : 0;
+			final int startCol = y > 0 ? (y - 1) * size + this.startCol: 0;
 			return new MatrixRef(this.matrix, size, startRow, startCol);
 		}
 		
@@ -57,28 +57,30 @@ public class MatricesMultiplication {
 				
 			}
 		}
-		
-		public static MatrixRef sum(MatrixRef matrixA, MatrixRef matrixB) {
-			final MatrixRef result;
-			if(matrixA.size != matrixB.size || matrixA.size == 0) {
-				result = null;
-			} else {
-				final int[][] sum = new int[matrixA.size][matrixA.size];
-				for (int i = 0; i < sum.length; i++) {
-					for (int j = 0; j < sum[i].length; j++) {
-						sum[i][j] = matrixA.get(i, j) + matrixB.get(i, j);
-					}
-				}
-				result = new MatrixRef(sum);
-			}
-			return result;
-		}
 	}
 
 	private static final int MAX_VALUE = 9;
 	
 	private static final Random RAND = new Random();
 	
+	public static MatrixRef sum(MatrixRef matrixA, MatrixRef matrixB) {
+		final MatrixRef result;
+		if(matrixA.size != matrixB.size || matrixA.size == 0) {
+			result = null;
+		} else {
+			final int[][] sum = new int[matrixA.size][matrixA.size];
+			for (int i = 0; i < sum.length; i++) {
+				for (int j = 0; j < sum[i].length; j++) {
+					sum[i][j] = matrixA.get(i, j) + matrixB.get(i, j);
+				}
+			}
+			result = new MatrixRef(sum);
+		}
+		return result;
+	}
+
+
+
 	public static int[][] iterMul(final int[][] matrixA, final int[][] matrixB) {
 		int[][] result = null;
 		if (checkMatrices(matrixA, matrixB)) {
@@ -97,30 +99,62 @@ public class MatricesMultiplication {
 	
 	
 	
-	public static int[][] recursiveMul(MatrixRef matrixA, MatrixRef matrixB) {
+	public static MatrixRef recursiveMul(MatrixRef matrixA, MatrixRef matrixB) {
 		final int size = matrixA.size;
-		int[][] matrixC = new int[size][size];
+		final int[][] arrC = new int[size][size];
+		final MatrixRef matrixC = new MatrixRef(arrC);
 		if (size == 1) {
-			matrixC[0][0] = matrixA.getElemOneOne() * matrixB.getElemOneOne();
+			arrC[0][0] = matrixA.get(0,0) * matrixB.get(0, 0);
 		} else {
-			matrixC[0][0] = matrixA.getElemOneOne() * matrixB.getElemOneOne();
+			MatrixRef matrixA11 = matrixA.split(1, 1);
+			MatrixRef matrixA12 = matrixA.split(1, 2);
+			MatrixRef matrixA21 = matrixA.split(2, 1);
+			MatrixRef matrixA22 = matrixA.split(2, 2);
+			
+			MatrixRef matrixB11 = matrixB.split(1, 1);
+			MatrixRef matrixB12 = matrixB.split(1, 2);
+			MatrixRef matrixB21 = matrixB.split(2, 1);
+			MatrixRef matrixB22 = matrixB.split(2, 2);
+			
+			MatrixRef matrixC11 = matrixC.split(1, 1);
+			MatrixRef matrixC12 = matrixC.split(1, 2);
+			MatrixRef matrixC21 = matrixC.split(2, 1);
+			MatrixRef matrixC22 = matrixC.split(2, 2);
+			
+
+			matrixC11.assign(sum(recursiveMul(matrixA11, matrixB11),
+					recursiveMul(matrixA12, matrixB21)));
+			matrixC12.assign(sum(recursiveMul(matrixA11, matrixB12), 
+					recursiveMul(matrixA12, matrixB22)));
+			matrixC21.assign(sum(recursiveMul(matrixA21, matrixB11),
+					recursiveMul(matrixA22, matrixB21)));
+			matrixC22.assign(sum(recursiveMul(matrixA21, matrixB12), 
+					recursiveMul(matrixA22, matrixB22)));
 		}
-		return null;
+		return matrixC;
 	}
 	
 	public static void main(String...args) {
-		int[][] matrixA = createSquareMatrix(4);
-		int[][] matrixB = createSquareMatrix(4);
-		int[][] multiplied = iterMul(matrixA, matrixB);
+		int[][] arrA = new int[][] { 
+			{4, 6, 6, 8},
+			{3, 3, 1, 4},
+			{9, 8, 6, 2},
+			{4, 7, 8, 2}
+		};
+		int[][] arrB = new int[][] { 
+			{7, 4, 5, 9},
+			{2, 8, 8, 4},
+			{5, 5, 5, 7},
+			{2, 9, 8, 1}
+		};
+		int[][] arrC = iterMul(arrA, arrB);
 		
-		printMatrix(matrixA);
-		printMatrix(matrixB);
-		printMatrix(multiplied);
-		MatrixRef m = new MatrixRef(multiplied);
-		MatrixRef n = new MatrixRef(new int[4][4]);
-		n.split(1, 1).assign(m.split(2, 2));
-		printMatrixRef(n);
-		printMatrixRef(MatrixRef.sum(m.split(1, 1), m.split(2, 2)));
+		printMatrix(arrA);
+		printMatrix(arrB);
+		printMatrix(arrC);
+		MatrixRef matrixA = new MatrixRef(arrA);
+		MatrixRef matrixB = new MatrixRef(arrB);
+		printMatrixRef(recursiveMul(matrixA, matrixB));
 	}
 	
 	public static void printMatrix(final int[][] matrix) {
