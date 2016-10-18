@@ -78,6 +78,22 @@ public class MatricesMultiplication {
 		}
 		return result;
 	}
+	
+	public static MatrixRef sub(MatrixRef matrixA, MatrixRef matrixB) {
+		final MatrixRef result;
+		if(matrixA.size != matrixB.size || matrixA.size == 0) {
+			result = null;
+		} else {
+			final int[][] sum = new int[matrixA.size][matrixA.size];
+			for (int i = 0; i < sum.length; i++) {
+				for (int j = 0; j < sum[i].length; j++) {
+					sum[i][j] = matrixA.get(i, j) - matrixB.get(i, j);
+				}
+			}
+			result = new MatrixRef(sum);
+		}
+		return result;
+	}
 
 
 
@@ -121,6 +137,55 @@ public class MatricesMultiplication {
 			MatrixRef matrixC21 = matrixC.split(2, 1);
 			MatrixRef matrixC22 = matrixC.split(2, 2);
 			
+			MatrixRef matrixS1 = sub(matrixB12, matrixB22);
+			MatrixRef matrixS2 = sum(matrixA11, matrixA12);
+			MatrixRef matrixS3 = sum(matrixA21, matrixA22);
+			MatrixRef matrixS4 = sub(matrixB21, matrixB11);
+			MatrixRef matrixS5 = sum(matrixA11, matrixA22);
+			MatrixRef matrixS6 = sum(matrixB11, matrixB22);
+			MatrixRef matrixS7 = sub(matrixA12, matrixA22);
+			MatrixRef matrixS8 = sum(matrixB21, matrixB22);
+			MatrixRef matrixS9 = sub(matrixA11, matrixA21);
+			MatrixRef matrixS10 = sum(matrixB11, matrixB12);
+			
+			MatrixRef matrixP1 = mulStrassen(matrixA11, matrixS1);
+			MatrixRef matrixP2 = mulStrassen(matrixS2, matrixB22);
+			MatrixRef matrixP3 = mulStrassen(matrixS3, matrixB11);
+			MatrixRef matrixP4 = mulStrassen(matrixA22, matrixS4);
+			MatrixRef matrixP5 = mulStrassen(matrixS5, matrixS6);
+			MatrixRef matrixP6 = mulStrassen(matrixS7, matrixS8);
+			MatrixRef matrixP7 = mulStrassen(matrixS9, matrixS10);
+			
+			matrixC11.assign(sum(sum(matrixP5, matrixP6), sub(matrixP4, matrixP2)));
+			matrixC12.assign(sum(matrixP1, matrixP2)); 
+			matrixC21.assign(sum(matrixP3, matrixP4));
+			matrixC22.assign(sum(sub(matrixP5, matrixP7),sub(matrixP1, matrixP3)));
+		}
+		return matrixC;
+	}
+	
+	public static MatrixRef mulStrassen(MatrixRef matrixA, MatrixRef matrixB) {
+		final int size = matrixA.size;
+		final int[][] arrC = new int[size][size];
+		final MatrixRef matrixC = new MatrixRef(arrC);
+		if (size == 1) {
+			arrC[0][0] = matrixA.get(0,0) * matrixB.get(0, 0);
+		} else {
+			MatrixRef matrixA11 = matrixA.split(1, 1);
+			MatrixRef matrixA12 = matrixA.split(1, 2);
+			MatrixRef matrixA21 = matrixA.split(2, 1);
+			MatrixRef matrixA22 = matrixA.split(2, 2);
+			
+			MatrixRef matrixB11 = matrixB.split(1, 1);
+			MatrixRef matrixB12 = matrixB.split(1, 2);
+			MatrixRef matrixB21 = matrixB.split(2, 1);
+			MatrixRef matrixB22 = matrixB.split(2, 2);
+			
+			MatrixRef matrixC11 = matrixC.split(1, 1);
+			MatrixRef matrixC12 = matrixC.split(1, 2);
+			MatrixRef matrixC21 = matrixC.split(2, 1);
+			MatrixRef matrixC22 = matrixC.split(2, 2);
+			
 
 			matrixC11.assign(sum(recursiveMul(matrixA11, matrixB11),
 					recursiveMul(matrixA12, matrixB21)));
@@ -135,26 +200,25 @@ public class MatricesMultiplication {
 	}
 	
 	public static void main(String...args) {
-		int[][] arrA = new int[][] { 
-			{4, 6, 6, 8},
-			{3, 3, 1, 4},
-			{9, 8, 6, 2},
-			{4, 7, 8, 2}
-		};
-		int[][] arrB = new int[][] { 
-			{7, 4, 5, 9},
-			{2, 8, 8, 4},
-			{5, 5, 5, 7},
-			{2, 9, 8, 1}
-		};
+		long startTime;
+		long stopTime;
+		int[][] arrA = createSquareMatrix(512);
+		int[][] arrB = createSquareMatrix(512);
+		startTime = System.nanoTime();
 		int[][] arrC = iterMul(arrA, arrB);
-		
-		printMatrix(arrA);
-		printMatrix(arrB);
-		printMatrix(arrC);
+		stopTime = System.nanoTime();
+		System.out.println((stopTime - startTime) / 1000_000);
 		MatrixRef matrixA = new MatrixRef(arrA);
 		MatrixRef matrixB = new MatrixRef(arrB);
-		printMatrixRef(recursiveMul(matrixA, matrixB));
+		
+		startTime = System.nanoTime();
+		MatrixRef matrixC = recursiveMul(matrixA, matrixB);
+		stopTime = System.nanoTime();
+		System.out.println((stopTime - startTime) / 1000_000);
+/*		printMatrix(arrA);
+		printMatrix(arrB);
+		printMatrix(arrC);
+		printMatrixRef(matrixC);*/
 	}
 	
 	public static void printMatrix(final int[][] matrix) {
