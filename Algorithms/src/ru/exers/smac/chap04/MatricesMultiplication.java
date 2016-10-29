@@ -41,15 +41,15 @@ public class MatricesMultiplication {
 			return matrix[startRow][startCol];
 		}
 		
-		public int get(final int i, final int j) {
+		private int get(final int i, final int j) {
 			return matrix[startRow + i][startCol + j];
 		}
 		
-		public int[] getRow(final int i) {
+		private int[] getRow(final int i) {
 			return matrix[startRow + i];
 		}
 		
-		public void assign(MatrixRef anotherMatrix) {
+		private void assign(MatrixRef anotherMatrix) {
 			final int size = Math.min(this.size, anotherMatrix.size);
 			for (int i = 0; i < size; i++){
 				System.arraycopy(anotherMatrix.getRow(i), anotherMatrix.startCol, 
@@ -113,15 +113,25 @@ public class MatricesMultiplication {
 		return result;
 	}
 	
+	public static MatrixRef iterMulRef(final MatrixRef matrixA, final MatrixRef matrixB) {
+		final int[][] resArr = new int[matrixA.size][matrixA.size];
+		for (int i = 0; i < resArr.length; i++) {
+			for (int j = 0; j < resArr[i].length; j++) {
+				for (int k = 0; k < resArr.length; k++) {
+					resArr[i][j] += matrixA.get(i, k) * matrixB.get(k, j);
+				}
+			}
+		}
+		return new MatrixRef(resArr);
+	}
 	
-	
-	public static MatrixRef recursiveMul(MatrixRef matrixA, MatrixRef matrixB) {
+	public static MatrixRef mulStrassen(MatrixRef matrixA, MatrixRef matrixB) {
 		final int size = matrixA.size;
-		final int[][] arrC = new int[size][size];
-		final MatrixRef matrixC = new MatrixRef(arrC);
-		if (size == 1) {
-			arrC[0][0] = matrixA.get(0,0) * matrixB.get(0, 0);
+		final MatrixRef matrixC;
+		if (size == 16) {
+			matrixC = iterMulRef(matrixA, matrixB);
 		} else {
+			matrixC = new MatrixRef(new int[size][size]);
 			MatrixRef matrixA11 = matrixA.split(1, 1);
 			MatrixRef matrixA12 = matrixA.split(1, 2);
 			MatrixRef matrixA21 = matrixA.split(2, 1);
@@ -164,7 +174,7 @@ public class MatricesMultiplication {
 		return matrixC;
 	}
 	
-	public static MatrixRef mulStrassen(MatrixRef matrixA, MatrixRef matrixB) {
+	public static MatrixRef recursiveMul(MatrixRef matrixA, MatrixRef matrixB) {
 		final int size = matrixA.size;
 		final int[][] arrC = new int[size][size];
 		final MatrixRef matrixC = new MatrixRef(arrC);
@@ -212,7 +222,7 @@ public class MatricesMultiplication {
 		MatrixRef matrixB = new MatrixRef(arrB);
 		
 		startTime = System.nanoTime();
-		MatrixRef matrixC = recursiveMul(matrixA, matrixB);
+		MatrixRef matrixC = mulStrassen(matrixA, matrixB);
 		stopTime = System.nanoTime();
 		System.out.println((stopTime - startTime) / 1000_000);
 /*		printMatrix(arrA);
