@@ -36,11 +36,7 @@ public class MatricesMultiplication {
 			final int startCol = y > 0 ? (y - 1) * size + this.startCol: 0;
 			return new MatrixRef(this.matrix, size, startRow, startCol);
 		}
-		
-		public int getElemOneOne() {
-			return matrix[startRow][startCol];
-		}
-		
+				
 		private int get(final int i, final int j) {
 			return matrix[startRow + i][startCol + j];
 		}
