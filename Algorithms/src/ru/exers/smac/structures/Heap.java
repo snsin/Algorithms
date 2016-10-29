@@ -20,6 +20,14 @@ public class Heap<T> {
 		heap = createArray(DEFAULT_ARRAY_SIZE);
 	}
 	
+	public Heap(T[] array) {
+		if (array != null) {
+			heap = array;
+			size = array.length;
+			buildMaxHeap();
+		}
+	}
+	
 	public int parent(int i) {
 		return (i - 1) / 2;
 	}
@@ -61,7 +69,7 @@ public class Heap<T> {
 	
 	public void buildMaxHeap() {
 		for (int i = (size - 1)/ 2; i >= 0; i--){
-			
+			maxHeapify(i);
 		}
 	}
 
