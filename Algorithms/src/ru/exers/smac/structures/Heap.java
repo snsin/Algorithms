@@ -12,24 +12,38 @@ public class Heap<T> {
 	
 	private Comparator<T> comparator;
 	
+	@SuppressWarnings("unchecked")
 	public Heap(int length) {
-		heap = createArray(length);
+		heap = (T[]) new Object[length];
 	}
 	
 	public Heap() {
-		heap = createArray(DEFAULT_ARRAY_SIZE);
+		this(DEFAULT_ARRAY_SIZE);
 	}
 	
 	public Heap(T[] array) {
+		this();
+		if (array != null && array.length > 0) {
+			heap = array;
+			size = array.length;
+		}
+		comparator = createDefaultComp(array[0]);
+		buildMaxHeap();
+	}
+	
+	public Heap(T[] array, Comparator<T> comparator) {
+		this();
 		if (array != null) {
 			heap = array;
 			size = array.length;
-			buildMaxHeap();
-		}
+		} 
+		this.comparator = comparator == null ?
+				createDefaultComp(heap[0]) : comparator;
+		buildMaxHeap();
 	}
 	
 	public int parent(int i) {
-		return (i - 1) / 2;
+		return i  / 2;
 	}
 	
 	public int left(int i) {
@@ -48,16 +62,24 @@ public class Heap<T> {
 		return size;
 	}
 	
+	public Object getComparator() {
+		return comparator;
+	}
+	
+	public T[] getArray() {
+		return heap;
+	}
+	
 	public void maxHeapify(int i) {
 		final int l = left(i);
 		final int r = right(i);
 		int largest;
-		if (l <= size && greaterThan(l, i)) {
+		if (l < size && greaterThan(l, i)) {
 			largest = l;
 		} else {
 			largest = i;
 		}
-		if (r <= size && greaterThan(r, i)) {
+		if (r < size && greaterThan(r, largest)) {
 			largest = r;
 		}
 		if (largest != i) {
@@ -68,7 +90,7 @@ public class Heap<T> {
 	}
 	
 	public void buildMaxHeap() {
-		for (int i = (size - 1)/ 2; i >= 0; i--){
+		for (int i = (size / 2) - 1; i >= 0; i--){
 			maxHeapify(i);
 		}
 	}
