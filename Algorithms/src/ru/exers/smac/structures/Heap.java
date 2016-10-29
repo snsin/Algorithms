@@ -101,10 +101,6 @@ public class Heap<T> {
 		heap[j] =  dummy;
 	}
 
-	@SuppressWarnings("unchecked")
-	private static <T> T[] createArray(int length) {
-		return (T[]) new Object[length];
-	}
 
 	@SuppressWarnings("unchecked")
 	private static <T> Comparator<T> createDefaultComp(T o) {
