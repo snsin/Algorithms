@@ -99,16 +99,16 @@ public class Heap<T> {
 	}
 	
 	private int largest(final int l, final int i, final int r){
-		int lrgst;
+		int largest;
 		if (l < size && greaterThan(l, i)) {
-			lrgst = l;
+			largest = l;
 		} else {
-			lrgst = i;
+			largest = i;
 		}
-		if (r < size && greaterThan(r, lrgst)) {
-			lrgst = r;
+		if (r < size && greaterThan(r, largest)) {
+			largest = r;
 		}
-		return lrgst;
+		return largest;
 	}
 
 	private void swap(final int i, final int j) {
@@ -129,6 +129,7 @@ public class Heap<T> {
 		return comp;
 	}
 
+	@SuppressWarnings("unused")
 	private boolean lessThan(int index1, int index2) {
 		return comparator.compare(heap[index1], heap[index2]) < 0;
 	}
