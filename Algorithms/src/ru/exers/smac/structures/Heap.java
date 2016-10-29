@@ -71,22 +71,16 @@ public class Heap<T> {
 	}
 	
 	public void maxHeapify(int i) {
-		final int l = left(i);
-		final int r = right(i);
-		int largest;
-		if (l < size && greaterThan(l, i)) {
-			largest = l;
-		} else {
-			largest = i;
-		}
-		if (r < size && greaterThan(r, largest)) {
-			largest = r;
-		}
-		if (largest != i) {
+		int l = left(i);
+		int r = right(i);
+		int largest = largest(l, i, r);
+		while (largest != i) {
 			swap(i, largest);
-			maxHeapify(largest);
+			i = largest;
+			l = left(largest);
+			r = right(largest);
+			largest = largest(l, i, r);
 		}
-	
 	}
 	
 	public void buildMaxHeap() {
@@ -94,8 +88,21 @@ public class Heap<T> {
 			maxHeapify(i);
 		}
 	}
+	
+	private int largest(final int l, final int i, final int r){
+		int lrgst;
+		if (l < size && greaterThan(l, i)) {
+			lrgst = l;
+		} else {
+			lrgst = i;
+		}
+		if (r < size && greaterThan(r, lrgst)) {
+			lrgst = r;
+		}
+		return lrgst;
+	}
 
-	private void swap(int i, int j) {
+	private void swap(final int i, final int j) {
 		T dummy = heap[i];
 		heap[i] = heap[j];
 		heap[j] =  dummy;
