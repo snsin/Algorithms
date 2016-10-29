@@ -58,6 +58,7 @@ public class Heap<T> {
 		return heap[i];
 	}
 	
+	
 	public int size() {
 		return size;
 	}
@@ -86,6 +87,14 @@ public class Heap<T> {
 	public void buildMaxHeap() {
 		for (int i = (size / 2) - 1; i >= 0; i--){
 			maxHeapify(i);
+		}
+	}
+	
+	public void sort() {
+		for (int i = size - 1; i > 0; i--){
+			swap(0, i);
+			size--;
+			maxHeapify(0);
 		}
 	}
 	
