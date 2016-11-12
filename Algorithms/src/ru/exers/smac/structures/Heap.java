@@ -149,4 +149,9 @@ public class Heap<T> {
 		return comparator.compare(heap[index1], heap[index2]) > 0;
 	}
 
+	protected void increaseCapacity() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
