@@ -122,7 +122,7 @@ public class Heap<T> {
 		return largest;
 	}
 
-	private void swap(final int i, final int j) {
+	void swap(final int i, final int j) {
 		T dummy = heap[i];
 		heap[i] = heap[j];
 		heap[j] =  dummy;
