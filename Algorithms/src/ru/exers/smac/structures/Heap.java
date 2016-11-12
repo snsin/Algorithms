@@ -10,11 +10,16 @@ public class Heap<T> {
 	
 	private int size = 0;
 	
-	private Comparator<T> comparator;
+	private Comparator<? super T> comparator;
 	
 	@SuppressWarnings("unchecked")
 	public Heap(int length) {
 		heap = (T[]) new Object[length];
+	}
+	
+	public Heap(int length, Comparator<? super T> comparator) {
+		this(length);
+		this.comparator = comparator;
 	}
 	
 	public Heap() {
@@ -31,7 +36,7 @@ public class Heap<T> {
 		buildMaxHeap();
 	}
 	
-	public Heap(T[] array, Comparator<T> comparator) {
+	public Heap(T[] array, Comparator<? super T> comparator) {
 		this();
 		if (array != null) {
 			heap = array;
