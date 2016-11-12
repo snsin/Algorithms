@@ -67,10 +67,6 @@ public class Heap<T> {
 		return comparator;
 	}
 	
-	public T[] getArray() {
-		return heap;
-	}
-	
 	public void maxHeapify(int i) {
 		int l = left(i);
 		int r = right(i);
@@ -98,6 +94,16 @@ public class Heap<T> {
 		}
 	}
 	
+	T[] getArray() {
+		return heap;
+	}
+	
+	void decSize() {
+		if (size > 0) {
+			size--;
+		}
+	}
+
 	private int largest(final int l, final int i, final int r){
 		int largest;
 		if (l < size && greaterThan(l, i)) {
