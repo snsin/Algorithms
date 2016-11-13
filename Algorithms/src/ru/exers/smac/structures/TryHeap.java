@@ -14,6 +14,16 @@ public class TryHeap {
 		Heap<Integer> h = new Heap<>(arr, Comparator.reverseOrder());
 		h.sort();
 		System.out.println(Arrays.toString(h.getArray()));
+		PriorityQueue<Integer, String> pq = new PriorityQueue<>(16);
+		pq.insert(5, "first");
+		pq.insert(0, "fifth");
+		pq.insert(1, "fourth");
+		pq.insert(2, "third");
+		pq.insert(4, "second");
+		while (!pq.isEmpty()) {
+			System.out.println(pq.extracrMax().getValue());
+		}
+		
 	}			
 
 	private static Integer[] createIntegerArray(final int size, final int maxValue) {
