@@ -1,5 +1,6 @@
 package ru.exers.smac.structures;
 
+import java.util.Arrays;
 import java.util.Comparator;
 
 public class Heap<T> {
@@ -68,6 +69,10 @@ public class Heap<T> {
 		return size;
 	}
 	
+	public int capacity() {
+		return heap.length;
+	}
+
 	public Object getComparator() {
 		return comparator;
 	}
@@ -99,6 +104,11 @@ public class Heap<T> {
 		}
 	}
 	
+	void set(T value, int i) {
+		heap[i] =  value;
+		
+	}
+
 	T[] getArray() {
 		return heap;
 	}
@@ -109,17 +119,15 @@ public class Heap<T> {
 		}
 	}
 
-	private int largest(final int l, final int i, final int r){
-		int largest;
-		if (l < size && greaterThan(l, i)) {
-			largest = l;
-		} else {
-			largest = i;
-		}
-		if (r < size && greaterThan(r, largest)) {
-			largest = r;
-		}
-		return largest;
+	void incSize() {
+		size++;
+		
+	}
+
+	void increaseCapacity() {
+		final int newSize = heap.length == 0 ? 2 : heap.length + heap.length / 2;
+		heap = Arrays.copyOf(heap, newSize);
+		
 	}
 
 	void swap(final int i, final int j) {
@@ -140,6 +148,19 @@ public class Heap<T> {
 		return comp;
 	}
 
+	private int largest(final int l, final int i, final int r){
+		int largest;
+		if (l < size && greaterThan(l, i)) {
+			largest = l;
+		} else {
+			largest = i;
+		}
+		if (r < size && greaterThan(r, largest)) {
+			largest = r;
+		}
+		return largest;
+	}
+
 	@SuppressWarnings("unused")
 	private boolean lessThan(int index1, int index2) {
 		return comparator.compare(heap[index1], heap[index2]) < 0;
@@ -147,11 +168,6 @@ public class Heap<T> {
 
 	private boolean greaterThan(int index1, int index2) {
 		return comparator.compare(heap[index1], heap[index2]) > 0;
-	}
-
-	protected void increaseCapacity() {
-		// TODO Auto-generated method stub
-		
 	}
 
 }
