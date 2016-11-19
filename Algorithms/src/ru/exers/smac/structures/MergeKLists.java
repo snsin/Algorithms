@@ -1,7 +1,10 @@
 package ru.exers.smac.structures;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Random;
 
@@ -55,13 +58,16 @@ public class MergeKLists {
 			return size <= 0;
 		}
 		
-		public void minHeapify(final int i) {
+		public void minHeapify(int i) {
 			int left = left(i);
 			int right = right(i);
 			int lowest = min(left, i, right);
-			if (lowest != i) {
+			while (lowest != i) {
 				swap(i, lowest);
-				minHeapify(lowest);
+				i = lowest;
+				left = left(i);
+				right = right(i);
+				lowest = min(left, i, right);
 			}
 			
 		}
@@ -134,16 +140,65 @@ public class MergeKLists {
 
 	private static final Random RND = new Random();
 	
+	private static final int K = 10;
+	
+	private static final int LIST_LENGTH = 10;
+	
 	public static void main(String...args) {
-		NonincreasingHeap<Integer> heap = new NonincreasingHeap<>(10);
-		for (int i = 0; i < 9; i++) {
-			final int val = RND.nextInt(30);
-			System.out.println(val);
-			heap.insert(val);
+		@SuppressWarnings("unchecked")
+		List<Integer>[] a = (List<Integer>[]) new List<?>[K];
+		for (int i = 0; i < a.length; i++) {
+			int minVal = RND.nextInt(20);
+			int maxVal = minVal + 10 + RND.nextInt(20);
+			a[i] = new ArrayList<>(LIST_LENGTH);
+			addValues(a[i], LIST_LENGTH, minVal, maxVal);
+			Collections.sort(a[i]);
 		}
-		System.out.println("===============================");
-		while (!heap.isEmpty()) {
-			System.out.println(heap.extractMin());
+		
+		for (List<Integer> list : a) {
+			System.out.println(Arrays.toString(list.toArray()));
 		}
+		
+		List<Integer> res =  mergeLists(a);
+		
+		System.out.println(Arrays.toString(res.toArray()));
+	
 	}
+
+	private static void addValues(List<Integer> list, int listLength, int minVal, int maxVal) {
+		while (listLength > 0) {
+			list.add(RND.nextInt(maxVal - minVal) + minVal);
+			listLength--;
+		}
+		
+	}
+	
+	private static <T extends Comparable<? super T>> List<T> mergeLists(List<T>[] lists) {
+		final List<T> resultList = new ArrayList<>();
+		final NonincreasingHeap<T> heap = new NonincreasingHeap<>(K);
+		final int maxListLength = maxLength(lists);
+		for (int i = 0; i < maxListLength; i++) {
+			for (List<T> list : lists) {
+				if (i < list.size()) {
+					heap.insert(list.get(i));
+				}	
+			}
+			resultList.add(heap.extractMin());
+		}
+		while (!heap.isEmpty()) {
+			resultList.add(heap.extractMin());
+		}
+		return resultList;
+	}
+
+	private static <T> int maxLength(List<T>[] lists) {
+		int max = 0;
+		for (List<T> list : lists) {
+			final int currentLength = list.size();
+			max = currentLength > max ? currentLength : max;
+		}
+		return max;
+	}
+	
+	
 }
